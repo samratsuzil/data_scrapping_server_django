@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.http import HttpResponse
+# from django.http import HttpResponse
 from bs4 import BeautifulSoup
 from requests import get
 
@@ -7,8 +7,6 @@ from requests import get
 def index(request):
     results = []
     query = request.GET.urlencode()[slice(2, len(request.GET.urlencode()), 1)]
-
-
 # flipkart
     url = 'https://www.flipkart.com/search?q='+query + \
         '&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off'
@@ -42,7 +40,6 @@ def index(request):
     url = 'https://www.sastodeal.com/catalogsearch/result/?q='+query
     response = get(url)
     html_soup = BeautifulSoup(response.text, 'html.parser')
-    print("Response Response Response Response"+response.text)
     for a in html_soup.find_all('li',  attrs={'class': 'product-item'}):
         link = a.find('a', attrs={'class': 'product-item-photo'})
         imageLink = a.find('img', attrs={'class': 'product-image-photo'})
@@ -53,6 +50,7 @@ def index(request):
         result = {"imageLink": ("None" if(imageLink == None) else imageLink.get('src')), "Link": ("None" if(link == None) else link.get('href')), "Name": ("None" if(name == None) else name.a.text), "Price": ("None" if(price == None) else price.span.span.span.text),
                   }
         results.append((result))
+
 
 # nepbay
     url = 'https://market.thulo.com/shopping/search?q='+query
@@ -70,17 +68,17 @@ def index(request):
         results.append((result))
 
 # gajabko
-    url = 'http://gajabko.com/?s='+query
-    response = get(url)
-    html_soup = BeautifulSoup(response.text, 'html.parser')
-    for a in html_soup.find_all('li', attrs={'class': 'product'}):
-        link = a.find('a', attrs={'class': 'woocommerce-LoopProduct-link'})
-        imageLink = a.find('img', attrs={'class': 'wp-post-image'})
-        name = a.find('h3')
-        price = a.find('span', attrs={'class': 'price'})
-        result = {"imageLink": ("None" if(imageLink == None) else imageLink.get('src')), "Link": ("None" if(link == None) else link.get('href')), "Name": ("None" if(name == None) else name.text), "Price": ("None" if(
-            price == None) else price.text)}
-        results.append((result))
+    # url = 'http://gajabko.com/?s='+query
+    # response = get(url)
+    # html_soup = BeautifulSoup(response.text, 'html.parser')
+    # for a in html_soup.find_all('li', attrs={'class': 'product'}):
+    #     link = a.find('a', attrs={'class': 'woocommerce-LoopProduct-link'})
+    #     imageLink = a.find('img', attrs={'class': 'wp-post-image'})
+    #     name = a.find('h3')
+    #     price = a.find('span', attrs={'class': 'price'})
+    #     result = {"imageLink": ("None" if(imageLink == None) else imageLink.get('src')), "Link": ("None" if(link == None) else link.get('href')), "Name": ("None" if(name == None) else name.text), "Price": ("None" if(
+    #         price == None) else price.text)}
+    #     results.append((result))
 
 # socheko
     url = 'https://www.socheko.com/search/'+query
@@ -111,3 +109,4 @@ def index(request):
         results.append((result))
 
     return JsonResponse({'searchResults': results})
+    # return HttpResponse('<h1>Sushil</h1>')
